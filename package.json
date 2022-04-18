@@ -8,7 +8,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "check": "tsc --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require ts-node/register ./src/*.spec.ts"
   },
   "keywords": [],
   "author": "",

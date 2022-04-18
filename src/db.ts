@@ -1,7 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 
-const DB_PATH = path.join(__dirname, '..', 'db/data.json')
+import { Projects } from './types'
+
+const DB_FILE = 'database.json'
+const DB_PATH = path.join(__dirname, '..', 'db', DB_FILE)
 
 const initDB = (dbPath: string) => {
   console.log(`initializing db at ${dbPath}...\n`)
@@ -13,7 +16,7 @@ const initDB = (dbPath: string) => {
   }
 }
 
-const loadData = (): string => {
+const loadData = (): Projects => {
   if (!fs.existsSync(DB_PATH)) {
     initDB(DB_PATH)
   }
@@ -21,12 +24,12 @@ const loadData = (): string => {
   return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'))
 }
 
-const saveData = (data: object) => {
+const saveData = (data: Projects) => {
   if (!fs.existsSync(DB_PATH)) {
       throw new Error(`Could not find database at ${DB_PATH}`)
   }
 
-  fs.writeFileSync(DB_PATH, JSON.stringify(data))
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
 }
 
 export { loadData, saveData }
