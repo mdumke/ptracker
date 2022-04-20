@@ -6,7 +6,7 @@ export const computeCompletion = (project: Project): number => {
     return 0
   }
   const current = project.updates[project.updates.length - 1].value
-  return Math.round(current / project.target * 100)
+  return Math.round((current / project.target) * 100)
 }
 
 export const findIdLike = (projects: Projects, pattern: string): string => {
@@ -19,7 +19,9 @@ export const findIdLike = (projects: Projects, pattern: string): string => {
 
   if (matches.length > 1) {
     throw new Error(
-      `Ambiguous pattern. More than one project found:\n${matches.join('\n')}`
+      `Ambiguous pattern. More than one project found:\n\n - ${matches.join(
+        '\n - '
+      )}\n`
     )
   }
 
