@@ -1,5 +1,6 @@
 import { logger } from './logger'
-import { DBAdapter } from './types'
+import { DBAdapter, Project } from './types'
+import { dateStr } from './utils'
 import {
   addProject,
   computeCompletion,
@@ -21,12 +22,7 @@ export const init = (db: DBAdapter) => () => {
 
 export const ls = (db: DBAdapter) => (options: { all: boolean }) => {
   try {
-    const projects = listProjects(db.load(), options.all)
-    logger.info('tracked projects\n----------------\n')
-    projects.forEach(p => {
-      logger.info(` - ${p.title} (${computeCompletion(p)}%)`)
-    })
-    logger.info('')
+    printList(listProjects(db.load(), options.all))
   } catch (err) {
     logger.error(`Unable to prepare data. ${err}`)
   }
@@ -74,18 +70,29 @@ export const show = (db: DBAdapter) => (title: string) => {
   try {
     const projects = db.load()
     const id = findIdLike(projects, title)
-    const project = projects[id]
-    const start = project.startValue || 0
-    const completion = computeCompletion(project)
-    const titleStr = `${project.title} (${completion}%, from ${start})`
-    logger.info(`\n${titleStr}`)
-    logger.info(`${'-'.repeat(titleStr.length)}\n`)
-    project.updates.forEach(u => {
-      const dateStr = u.createdAt.toLocaleDateString('de-de')
-      logger.info(`${dateStr}\t${u.value}`)
-    })
-    logger.info(`\n  \t\t${project.target}`)
+    printDetails(projects[id])
   } catch (err) {
     logger.error(`Unable to show project details. ${err}`)
   }
+}
+
+const printList = (projects: Project[]) => {
+  logger.info('tracked projects')
+  logger.info('----------------\n')
+  projects.forEach(p => {
+    logger.info(` - ${p.title} (${computeCompletion(p)}%)`)
+  })
+  logger.info('')
+}
+
+const printDetails = (project: Project) => {
+  const start = project.startValue || 0
+  const completion = computeCompletion(project)
+  const titleStr = `${project.title} (${completion}%, from ${start})`
+  logger.info(`\n${titleStr}`)
+  logger.info(`${'-'.repeat(titleStr.length)}\n`)
+  project.updates.forEach(u => {
+    logger.info(`  ${dateStr(u.createdAt)}\t${u.value}`)
+  })
+  logger.info(`\n  \t\t${project.target}\n`)
 }
