@@ -2,11 +2,12 @@ import { Project, Projects } from './types'
 import { kebabize } from './utils'
 
 export const computeCompletion = (project: Project): number => {
+  const initial = project.startValue || 0
   if (!project.updates.length) {
-    return 0
+    return initial
   }
   const current = project.updates[project.updates.length - 1].value
-  return Math.round((current / project.target) * 100)
+  return Math.round(((initial - current) / (initial - project.target)) * 100)
 }
 
 export const findIdLike = (projects: Projects, pattern: string): string => {
@@ -48,7 +49,8 @@ const getProject = (projects: Projects, id: string): Project => {
 
 export const buildProject = (data: {
   title: string
-  target: string
+  target: string,
+  startValue?: string
 }): Project => {
   const target = parseFloat(data.target)
 
@@ -56,7 +58,7 @@ export const buildProject = (data: {
     throw new Error(`Could not convert ${data.target} to number`)
   }
 
-  return {
+  const project: Project = {
     id: kebabize(data.title),
     title: data.title,
     target,
@@ -64,6 +66,18 @@ export const buildProject = (data: {
     updatedAt: new Date(),
     updates: []
   }
+
+  if (data.startValue) {
+    const val = parseFloat(data.startValue)
+
+    if (isNaN(val)) {
+      throw new Error(`Could not convert ${data.startValue} to number`)
+    }
+
+    project.startValue = val
+  }
+
+  return project
 }
 
 export const addProject = (projects: Projects, project: Project): Projects => {

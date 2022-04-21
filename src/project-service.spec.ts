@@ -117,6 +117,23 @@ describe('buildProject', () => {
   it('fails if target is not numeric', () => {
     expect(() => buildProject({ title: 'Project 1', target: 'x' })).to.throw()
   })
+
+  it('handles an optional startValue', () => {
+    const p1 = buildProject({
+      title: 'Project 1',
+      target: '10',
+      startValue: '2.5'
+    })
+    expect(p1.startValue).to.equal(2.5)
+  })
+
+  it('fails if startValue is not a number', () => {
+    expect(() => buildProject({
+      title: 'Project 1',
+      target: '10',
+      startValue: 'a'
+    })).to.throw()
+  })
 })
 
 describe('addProject', () => {

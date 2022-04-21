@@ -10,6 +10,7 @@ export interface Project {
     createdAt: Date,
     updatedAt: Date,
     archived?: boolean,
+    startValue?: number,
     updates: Update[]
 }
 

@@ -26,6 +26,7 @@ program
 program
   .command('add <title> <target>')
   .description('register a new project together with a target')
+  .option('-s, --start-value <start>', 'the value at which the project begins')
   .action(add)
 
 program

@@ -32,10 +32,17 @@ export const ls = (options: { all: boolean }) => {
   }
 }
 
-export const add = (title: string, target: string) => {
+export const add = (
+  title: string,
+  target: string,
+  options: { startValue?: string }
+) => {
   try {
     const projects = loadData()
-    const nextProjects = addProject(projects, buildProject({ title, target }))
+    const nextProjects = addProject(
+      projects,
+      buildProject({ title, target, startValue: options.startValue })
+    )
     saveData(nextProjects)
     logger.success(`Created new project "${title}"`)
   } catch (err) {
@@ -68,7 +75,9 @@ export const show = (title: string) => {
     const projects = loadData()
     const id = findIdLike(projects, title)
     const project = projects[id]
-    const titleStr = `${project.title} (${computeCompletion(project)}%)`
+    const start = project.startValue || 0
+    const completion = computeCompletion(project)
+    const titleStr = `${project.title} (${completion}%, from ${start})`
     logger.info(`\n${titleStr}`)
     logger.info(`${'-'.repeat(titleStr.length)}\n`)
     project.updates.forEach(u => {

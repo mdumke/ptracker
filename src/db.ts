@@ -6,6 +6,7 @@ import { datetimeReviver } from './utils'
 
 const DB_FILE = '.ptracker.json'
 const DB_PATH = path.join(process.env['HOME'] || '~', DB_FILE)
+// const DB_PATH = path.join(__dirname, '../db/database.test.json')
 
 export const initDB = () => {
   if (fs.existsSync(DB_PATH)) {
