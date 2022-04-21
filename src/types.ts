@@ -1,19 +1,25 @@
 export interface Update {
-    value: number
-    createdAt: Date
+  value: number
+  createdAt: Date
 }
 
 export interface Project {
-    id: string,
-    title: string,
-    target: number,
-    createdAt: Date,
-    updatedAt: Date,
-    archived?: boolean,
-    startValue?: number,
-    updates: Update[]
+  id: string
+  title: string
+  target: number
+  createdAt: Date
+  updatedAt: Date
+  archived?: boolean
+  startValue?: number
+  updates: Update[]
 }
 
 export interface Projects {
-    [key: string]: Project
+  [key: string]: Project
+}
+
+export interface DBAdapter {
+  init(): string
+  load(): Projects
+  save(data: Projects): void
 }

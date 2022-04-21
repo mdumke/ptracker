@@ -6,33 +6,45 @@ import { datetimeReviver } from './utils'
 
 const DB_FILE = '.ptracker.json'
 const DB_PATH = path.join(process.env['HOME'] || '~', DB_FILE)
-// const DB_PATH = path.join(__dirname, '../db/database.test.json')
+const TEST_PATH = path.join(__dirname, '../db/database.test.json')
 
-export const initDB = () => {
-  if (fs.existsSync(DB_PATH)) {
-    throw new Error(`Database already exists at ${DB_PATH}. Aborting`)
+const initDB = (dbPath: string) => (): string => {
+  if (fs.existsSync(dbPath)) {
+    throw new Error(`Database already exists at ${dbPath}. Aborting`)
   }
 
-  fs.writeFileSync(DB_PATH, '{}')
-  return DB_PATH
+  fs.writeFileSync(dbPath, '{}')
+  return dbPath
 }
 
-const assertDB = () => {
-  if (!fs.existsSync(DB_PATH)) {
+const assertDB = (dbPath: string) => {
+  if (!fs.existsSync(dbPath)) {
     throw new Error(
-      `Could not find db at ${DB_PATH}. Be sure to run the "init" command first`
+      `Could not find db at ${dbPath}. Be sure to run the "init" command first`
     )
   }
 }
 
-export const loadData = (): Projects => {
-  assertDB()
-  return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'), datetimeReviver)
+const loadData = (dbPath: string) => (): Projects => {
+  assertDB(dbPath)
+  return JSON.parse(fs.readFileSync(dbPath, 'utf8'), datetimeReviver)
 }
 
-export const saveData = (data: Projects) => {
-  assertDB()
-  const tmpPath = `${DB_PATH}.tmp`
+const saveData = (dbPath: string) => (data: Projects) => {
+  assertDB(dbPath)
+  const tmpPath = `${dbPath}.tmp`
   fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2))
-  fs.renameSync(tmpPath, DB_PATH)
+  fs.renameSync(tmpPath, dbPath)
+}
+
+export const db = {
+  init: initDB(DB_PATH),
+  load: loadData(DB_PATH),
+  save: saveData(DB_PATH)
+}
+
+export const testDB = {
+  init: initDB(TEST_PATH),
+  load: loadData(TEST_PATH),
+  save: saveData(TEST_PATH)
 }
