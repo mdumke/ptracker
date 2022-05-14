@@ -10,9 +10,15 @@ export const computeCompletion = (project: Project): number => {
   return Math.round(((initial - current) / (initial - project.target)) * 100)
 }
 
-export const findIdLike = (projects: Projects, pattern: string): string => {
+export const findIdLike = (
+  projects: Projects,
+  pattern: string,
+  ignoreArchived: boolean = false
+): string => {
   const kPattern = kebabize(pattern)
-  const matches = Object.keys(projects).filter(key => key.includes(kPattern))
+  const matches = Object.keys(projects)
+    .filter(key => key.includes(kPattern))
+    .filter(key => !(ignoreArchived && projects[key].archived))
 
   if (!matches.length) {
     throw new Error(`Could not find id matching pattern "${pattern}"`)
@@ -49,7 +55,7 @@ const getProject = (projects: Projects, id: string): Project => {
 
 export const buildProject = (data: {
   title: string
-  target: string,
+  target: string
   startValue?: string
 }): Project => {
   const target = parseFloat(data.target)

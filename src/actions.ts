@@ -69,7 +69,7 @@ export const archive = (db: DBAdapter) => (title: string) => {
 export const show = (db: DBAdapter) => (title: string) => {
   try {
     const projects = db.load()
-    const id = findIdLike(projects, title)
+    const id = findIdLike(projects, title, true)
     printDetails(projects[id])
   } catch (err) {
     logger.error(`Unable to show project details. ${err}`)

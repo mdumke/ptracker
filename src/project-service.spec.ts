@@ -51,6 +51,28 @@ describe('findIdLike', () => {
     }
     expect(() => findIdLike(projects, 'oject')).to.throw()
   })
+
+  it('does not ignore archived projects by default', () => {
+    const p1 = buildProject({ title: 'Project 1', target: '10' })
+    const p2 = buildProject({ title: 'Project 2', target: '10' })
+    let projects = {
+      [p1.id]: p1,
+      [p2.id]: p2
+    }
+    projects = archiveProject(projects, p1.id)
+    expect(() => findIdLike(projects, 'oject')).to.throw()
+  })
+
+  it('can ignore archived projects', () => {
+    const p1 = buildProject({ title: 'Project 1', target: '10' })
+    const p2 = buildProject({ title: 'Project 2', target: '10' })
+    let projects = {
+      [p1.id]: p1,
+      [p2.id]: p2
+    }
+    projects = archiveProject(projects, p1.id)
+    expect(findIdLike(projects, 'oject', true)).to.eql(p2.id)
+  })
 })
 
 describe('listProjects', () => {
